@@ -6,22 +6,18 @@ const AgendamentoSchema = new Schema(
       type: String,
       required: true,
     },
-
     servico: {
       type: String,
       required: true,
     },
-
     data: {
       type: String,
       required: true,
     },
-
     horario: {
       type: String,
       required: true,
     },
-
     status: {
       type: String,
       enum: ["agendado", "concluido", "cancelado"],
