@@ -20,3 +20,18 @@ export async function POST(req: Request) {
     );
   }
 }
+
+export async function GET() {
+  try {
+    await dbConnect();
+
+    const agendamentos = await Agendamento.find();
+
+    return NextResponse.json(agendamentos);
+  } catch {
+    return NextResponse.json(
+      { error: "Erro ao buscar agendamentos" },
+      { status: 500 }
+    );
+  }
+}
