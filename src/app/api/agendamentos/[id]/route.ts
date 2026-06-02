@@ -4,17 +4,19 @@ import Agendamento from "@/models/Agendamento";
 
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
 
+    const { id } = await context.params; // 👈 CORREÇÃO PRINCIPAL
+
     const body = await req.json();
 
     const agendamentoAtualizado = await Agendamento.findByIdAndUpdate(
-      params.id,
+      id,
       body,
-      { new: true } // retorna o documento atualizado
+      { new: true }
     );
 
     if (!agendamentoAtualizado) {
@@ -25,9 +27,9 @@ export async function PUT(
     }
 
     return NextResponse.json(agendamentoAtualizado);
-  } catch {
+  } catch (error: any) {
     return NextResponse.json(
-      { error: "Erro ao atualizar agendamento" },
+      { error: error.message },
       { status: 500 }
     );
   }
@@ -68,12 +70,14 @@ export async function PATCH(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     await dbConnect();
 
-    const deletado = await Agendamento.findByIdAndDelete(params.id);
+    const { id } = await context.params; // 👈 CORREÇÃO PRINCIPAL
+
+    const deletado = await Agendamento.findByIdAndDelete(id);
 
     if (!deletado) {
       return NextResponse.json(
@@ -82,10 +86,12 @@ export async function DELETE(
       );
     }
 
-    return NextResponse.json({ message: "Agendamento deletado com sucesso" });
-  } catch {
+    return NextResponse.json({
+      message: "Agendamento deletado com sucesso",
+    });
+  } catch (error: any) {
     return NextResponse.json(
-      { error: "Erro ao deletar agendamento" },
+      { error: error.message },
       { status: 500 }
     );
   }
