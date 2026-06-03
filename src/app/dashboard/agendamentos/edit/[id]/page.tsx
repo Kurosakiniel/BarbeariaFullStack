@@ -1,7 +1,7 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { User, Scissors, CalendarDays, Clock, Pencil, CheckCircle} from "lucide-react";
 
 export default function EditAgendamentoPage() {
   const router = useRouter();
@@ -49,44 +49,199 @@ export default function EditAgendamentoPage() {
   }
 
   return (
-    <div style={{ maxWidth: 400 }}>
-      <h1>Editar Agendamento</h1>
+    <div className="flex flex-col gap-8 max-w-2xl">
 
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-        <input
-          placeholder="Cliente"
-          value={cliente}
-          onChange={(e) => setCliente(e.target.value)}
-          required
-        />
-        <input
-          placeholder="Serviço"
-          value={servico}
-          onChange={(e) => setServico(e.target.value)}
-          required
-        />
-        <input
-          type="date"
-          value={data}
-          onChange={(e) => setData(e.target.value)}
-          required
-        />
-        <input
-          type="time"
-          value={horario}
-          onChange={(e) => setHorario(e.target.value)}
-          required
-        />
-        <select value={status} onChange={(e) => setStatus(e.target.value)}>
-          <option value="agendado">Agendado</option>
-          <option value="concluido">Concluído</option>
-          <option value="cancelado">Cancelado</option>
-        </select>
+      {/* TÍTULO */}
+      <div>
+        <p className="text-[10px] tracking-[0.2em] text-amber-500 uppercase font-semibold mb-1">
+          Edição
+        </p>
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Salvando..." : "Salvar Alterações"}
-        </button>
-      </form>
+        <h1 className="text-2xl font-bold text-white">
+          Editar Agendamento
+        </h1>
+      </div>
+
+      {/* CARD */}
+      <div className="bg-[#111111] border border-[#222] rounded-xl overflow-hidden">
+
+        <div className="px-6 py-4 border-b border-[#222] flex items-center gap-3">
+          <Pencil className="w-4 h-4 text-amber-500" />
+
+          <h2 className="text-white font-semibold text-sm">
+            Atualizar Dados
+          </h2>
+        </div>
+
+        <form
+          onSubmit={handleSubmit}
+          className="p-6 flex flex-col gap-5"
+        >
+
+          {/* CLIENTE */}
+          <div>
+            <label className="flex items-center gap-2 text-sm text-zinc-400 mb-2">
+              <User className="w-4 h-4 text-amber-500" />
+              Cliente
+            </label>
+
+            <input
+              value={cliente}
+              onChange={(e) => setCliente(e.target.value)}
+              required
+              className="
+                w-full
+                bg-[#181818]
+                border
+                border-[#2a2a2a]
+                rounded-lg
+                px-4
+                py-3
+                text-white
+                placeholder:text-zinc-600
+                outline-none
+                focus:border-amber-500/50
+              "
+            />
+          </div>
+
+          {/* SERVIÇO */}
+          <div>
+            <label className="flex items-center gap-2 text-sm text-zinc-400 mb-2">
+              <Scissors className="w-4 h-4 text-amber-500" />
+              Serviço
+            </label>
+
+            <input
+              value={servico}
+              onChange={(e) => setServico(e.target.value)}
+              required
+              className="
+                w-full
+                bg-[#181818]
+                border
+                border-[#2a2a2a]
+                rounded-lg
+                px-4
+                py-3
+                text-white
+                placeholder:text-zinc-600
+                outline-none
+                focus:border-amber-500/50
+              "
+            />
+          </div>
+
+          {/* DATA E HORÁRIO */}
+          <div className="grid grid-cols-2 gap-4">
+
+            <div>
+              <label className="flex items-center gap-2 text-sm text-zinc-400 mb-2">
+                <CalendarDays className="w-4 h-4 text-amber-500" />
+                Data
+              </label>
+
+              <input
+                type="date"
+                value={data}
+                onChange={(e) => setData(e.target.value)}
+                required
+                className="
+                  w-full
+                  bg-[#181818]
+                  border
+                  border-[#2a2a2a]
+                  rounded-lg
+                  px-4
+                  py-3
+                  text-white
+                  outline-none
+                  focus:border-amber-500/50
+                "
+              />
+            </div>
+
+            <div>
+              <label className="flex items-center gap-2 text-sm text-zinc-400 mb-2">
+                <Clock className="w-4 h-4 text-amber-500" />
+                Horário
+              </label>
+
+              <input
+                type="time"
+                value={horario}
+                onChange={(e) => setHorario(e.target.value)}
+                required
+                className="
+                  w-full
+                  bg-[#181818]
+                  border
+                  border-[#2a2a2a]
+                  rounded-lg
+                  px-4
+                  py-3
+                  text-white
+                  outline-none
+                  focus:border-amber-500/50
+                "
+              />
+            </div>
+
+          </div>
+
+          {/* STATUS */}
+          <div>
+            <label className="flex items-center gap-2 text-sm text-zinc-400 mb-2">
+              <CheckCircle className="w-4 h-4 text-amber-500" />
+              Status
+            </label>
+
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="
+                w-full
+                bg-[#181818]
+                border
+                border-[#2a2a2a]
+                rounded-lg
+                px-4
+                py-3
+                text-white
+                outline-none
+                focus:border-amber-500/50
+              "
+            >
+              <option value="agendado">Agendado</option>
+              <option value="concluido">Concluído</option>
+              <option value="cancelado">Cancelado</option>
+            </select>
+          </div>
+
+          {/* BOTÃO */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="
+              mt-2
+              h-12
+              rounded-lg
+              bg-amber-500
+              text-black
+              font-semibold
+              transition-all
+              hover:bg-amber-400
+              disabled:opacity-50
+              disabled:cursor-not-allowed
+            "
+          >
+            {loading ? "Salvando..." : "Salvar Alterações"}
+          </button>
+
+        </form>
+
+      </div>
+
     </div>
   );
 }
