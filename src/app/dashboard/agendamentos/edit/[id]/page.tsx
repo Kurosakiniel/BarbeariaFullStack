@@ -6,7 +6,7 @@ import { User, Scissors, CalendarDays, Clock, Pencil, CheckCircle} from "lucide-
 export default function EditAgendamentoPage() {
   const router = useRouter();
   const params = useParams();
-  const id = params.id as string;
+  const id = params.id as string; 
 
   const [cliente, setCliente] = useState("");
   const [servico, setServico] = useState("");

@@ -23,7 +23,7 @@ export default function LoginPage() {
     });
 
     if (res?.ok) {
-      router.push("/");
+      router.push("/dashboard");
     } else {
       alert("Erro ao fazer login");
     }
