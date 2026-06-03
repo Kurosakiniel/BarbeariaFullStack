@@ -45,7 +45,7 @@ src/
 │   └── uiStore.ts                # Store Zustand (modal)
 └── types/
     └── index.ts                  # Tipos TypeScript globais
-
+    
 ⚙️ Como Rodar Localmente
 Pré-requisitos
 
