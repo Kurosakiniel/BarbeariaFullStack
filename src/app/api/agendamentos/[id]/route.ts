@@ -1,12 +1,24 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import Agendamento from "@/models/Agendamento";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export async function PUT(
   req: Request,
   context: { params: Promise<{ id: string }> }
 ) {
   try {
+
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      return NextResponse.json(
+        { error: "Não autorizado" },
+        { status: 401 }
+      );
+    }
+
     await dbConnect();
 
     const { id } = await context.params; // 👈 CORREÇÃO PRINCIPAL
@@ -40,6 +52,16 @@ export async function PATCH(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
+
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      return NextResponse.json(
+        { error: "Não autorizado" },
+        { status: 401 }
+      );
+    }
+
     await dbConnect();
 
     const { id } = await context.params; // 👈 ISSO AQUI É A CORREÇÃO
@@ -73,6 +95,16 @@ export async function DELETE(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
+
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+      return NextResponse.json(
+        { error: "Não autorizado" },
+        { status: 401 }
+      );
+    }
+    
     await dbConnect();
 
     const { id } = await context.params; // 👈 CORREÇÃO PRINCIPAL
