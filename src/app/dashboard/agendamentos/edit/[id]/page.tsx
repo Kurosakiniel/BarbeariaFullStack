@@ -1,69 +1,90 @@
-import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+"use client";
 
-type Props = {
-  params: {
-    id: string;
-  };
-};
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
 
-async function getAgendamento(id: string) {
-  const res = await fetch(`http://localhost:3000/api/agendamentos`, {
-    cache: "no-store",
-  });
+export default function EditAgendamentoPage() {
+  const router = useRouter();
+  const params = useParams();
+  const id = params.id as string;
 
-  const data = await res.json();
+  const [cliente, setCliente] = useState("");
+  const [servico, setServico] = useState("");
+  const [data, setData] = useState("");
+  const [horario, setHorario] = useState("");
+  const [status, setStatus] = useState("agendado");
+  const [loading, setLoading] = useState(false);
 
-  return data.find((item: any) => item._id === id);
-}
+  // busca os dados atuais do agendamento
+  useEffect(() => {
+    fetch(`/api/agendamentos/${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setCliente(data.cliente);
+        setServico(data.servico);
+        setData(data.data);
+        setHorario(data.horario);
+        setStatus(data.status);
+      });
+  }, [id]);
 
-export default async function EditAgendamentoPage({ params }: Props) {
-  const session = await getServerSession(authOptions);
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
 
-  if (!session) {
-    redirect("/login");
-  }
+    const res = await fetch(`/api/agendamentos/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ cliente, servico, data, horario, status }),
+    });
 
-  const agendamento = await getAgendamento(params.id);
-
-  if (!agendamento) {
-    return <h1>Agendamento não encontrado</h1>;
+    if (res.ok) {
+      router.push("/dashboard/agendamentos");
+      router.refresh();
+    } else {
+      const json = await res.json();
+      alert(json.error || "Erro ao editar agendamento");
+      setLoading(false);
+    }
   }
 
   return (
-    <div>
+    <div style={{ maxWidth: 400 }}>
       <h1>Editar Agendamento</h1>
 
-      {/* FORM SIMPLES (vamos melhorar depois) */}
-      <form
-        action={`/api/agendamentos/${params.id}`}
-        method="POST"
-      >
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         <input
-          name="cliente"
-          defaultValue={agendamento.cliente}
           placeholder="Cliente"
+          value={cliente}
+          onChange={(e) => setCliente(e.target.value)}
+          required
         />
-
         <input
-          name="servico"
-          defaultValue={agendamento.servico}
           placeholder="Serviço"
+          value={servico}
+          onChange={(e) => setServico(e.target.value)}
+          required
         />
-
         <input
-          name="data"
-          defaultValue={agendamento.data}
+          type="date"
+          value={data}
+          onChange={(e) => setData(e.target.value)}
+          required
         />
-
         <input
-          name="horario"
-          defaultValue={agendamento.horario}
+          type="time"
+          value={horario}
+          onChange={(e) => setHorario(e.target.value)}
+          required
         />
+        <select value={status} onChange={(e) => setStatus(e.target.value)}>
+          <option value="agendado">Agendado</option>
+          <option value="concluido">Concluído</option>
+          <option value="cancelado">Cancelado</option>
+        </select>
 
-        <button type="submit">
-          Salvar
+        <button type="submit" disabled={loading}>
+          {loading ? "Salvando..." : "Salvar Alterações"}
         </button>
       </form>
     </div>

@@ -1,49 +1,35 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
-
-type Agendamento = {
-  _id: string;
-  cliente: string;
-  servico: string;
-  data: string;
-  horario: string;
-  status: string;
-};
+import Link from "next/link";
+import dbConnect from "@/lib/db";
+import AgendamentoModel from "@/models/Agendamento";
+import type { Agendamento } from "@/types";
+import DeleteButton from "@/components/DeleteButton";
 
 async function getAgendamentos(): Promise<Agendamento[]> {
-  const res = await fetch("http://localhost:3000/api/agendamentos", {
-    cache: "no-store",
-  });
-
-  if (!res.ok) {
-    throw new Error("Erro ao buscar agendamentos");
-  }
-
-  return res.json();
+  await dbConnect();
+  const agendamentos = await AgendamentoModel.find().lean();
+  return JSON.parse(JSON.stringify(agendamentos));
 }
 
 export default async function AgendamentosPage() {
-  // 🔐 proteção
   const session = await getServerSession(authOptions);
+  if (!session) redirect("/login");
 
-  if (!session) {
-    redirect("/login");
-  }
-
-  // 📦 dados
   const agendamentos = await getAgendamentos();
 
   return (
     <div>
       <h1>Agendamentos</h1>
 
-      {/* BOTÃO FUTURO */}
-      <button style={{ margin: "10px 0", padding: "8px" }}>
+      <Link
+        href="/dashboard/agendamentos/novo"
+        style={{ display: "inline-block", margin: "10px 0", padding: "8px", border: "1px solid black", textDecoration: "none" }}
+      >
         + Novo Agendamento
-      </button>
+      </Link>
 
-      {/* TABELA */}
       <table border={1} cellPadding={10} style={{ width: "100%" }}>
         <thead>
           <tr>
@@ -55,7 +41,6 @@ export default async function AgendamentosPage() {
             <th>Ações</th>
           </tr>
         </thead>
-
         <tbody>
           {agendamentos.map((item) => (
             <tr key={item._id}>
@@ -64,12 +49,11 @@ export default async function AgendamentosPage() {
               <td>{item.data}</td>
               <td>{item.horario}</td>
               <td>{item.status}</td>
-
               <td>
-                <button>Editar</button>
-                <button style={{ marginLeft: 8, color: "red" }}>
-                  Excluir
-                </button>
+                <Link href={`/dashboard/agendamentos/edit/${item._id}`}>
+                  Editar
+                </Link>
+                <DeleteButton id={item._id} /> 
               </td>
             </tr>
           ))}
