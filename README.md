@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+📸 Visão Geral
+O Boa Barbearia é uma aplicação web fullstack que permite ao barbeiro/administrador:
 
-## Getting Started
+Criar uma conta protegida por senha com hashing bcrypt
+Fazer login com autenticação JWT via NextAuth.js
+Visualizar um dashboard com os agendamentos do dia
+Criar, editar, excluir e listar todos os agendamentos
+Gerenciar status dos atendimentos: agendado, concluído ou cancelado
 
-First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+🚀 Stack de Tecnologias
+CamadaTecnologiaFrameworkNext.js 16 (App Router)LinguagemTypeScript 5Banco de dadosMongoDB Atlas + MongooseAutenticaçãoNextAuth.js v4 (JWT)EstilizaçãoTailwind CSS v4 + ShadCN/UIEstado globalZustandÍconesLucide ReactCriptografiabcryptjs
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+📁 Estrutura do Projeto
+src/
+├── app/
+│   ├── api/
+│   │   ├── agendamentos/
+│   │   │   ├── route.ts          # GET (listar) e POST (criar)
+│   │   │   └── [id]/route.ts     # GET, PUT, PATCH e DELETE por ID
+│   │   ├── auth/[...nextauth]/   # Handler do NextAuth
+│   │   └── register/route.ts     # Cadastro de usuário com bcrypt
+│   ├── dashboard/
+│   │   ├── layout.tsx            # Layout protegido (getServerSession)
+│   │   ├── page.tsx              # Agendamentos do dia
+│   │   ├── loading.tsx           # Estado de carregamento
+│   │   ├── error.tsx             # Tratamento de erros
+│   │   └── agendamentos/
+│   │       ├── page.tsx          # Lista completa
+│   │       ├── novo/page.tsx     # Formulário de criação
+│   │       └── edit/[id]/        # Formulário de edição (rota dinâmica)
+│   ├── login/page.tsx
+│   └── register/page.tsx
+├── components/
+│   ├── DeleteButton.tsx          # Client Component com modal Zustand
+│   └── ui/button.tsx             # Componente ShadCN customizado
+├── lib/
+│   ├── auth.ts                   # Configuração NextAuth
+│   ├── db.ts                     # Conexão Singleton MongoDB
+│   └── utils.ts                  # Utilitários (cn)
+├── models/
+│   ├── Agendamento.ts            # Schema Mongoose
+│   └── User.ts                   # Schema de usuário
+├── store/
+│   └── uiStore.ts                # Store Zustand (modal)
+└── types/
+    └── index.ts                  # Tipos TypeScript globais
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+⚙️ Como Rodar Localmente
+Pré-requisitos
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Node.js 18+
+Conta no MongoDB Atlas (plano gratuito funciona)
 
-## Learn More
+1. Clone o repositório
+bashgit clone https://github.com/seu-usuario/BarbeariaFullStack.git
+cd BarbeariaFullStack
+2. Instale as dependências
+bashnpm install
+3. Configure as variáveis de ambiente
+Crie um arquivo .env.local na raiz do projeto:
+env# String de conexão do MongoDB Atlas
+# Acesse: Atlas → Connect → Drivers → copie a URI
+MONGODB_URI=mongodb+srv://<usuario>:<senha>@cluster0.xxxxx.mongodb.net/barbearia?retryWrites=true&w=majority
 
-To learn more about Next.js, take a look at the following resources:
+# Segredo para assinar os tokens JWT do NextAuth
+# Gere um com: openssl rand -base64 32
+NEXTAUTH_SECRET=seu_segredo_aqui
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# URL base da aplicação
+NEXTAUTH_URL=http://localhost:3000
+4. Rode o servidor de desenvolvimento
+bashnpm run dev
+Acesse http://localhost:3000.
+5. Crie seu primeiro usuário
+Navegue até /register para criar a conta de administrador. Em seguida, faça login em /login.
